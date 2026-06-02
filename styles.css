@@ -15,6 +15,7 @@
   --shadow: 0 22px 60px rgba(2, 57, 25, 0.14);
   --radius: 8px;
   --container: min(1160px, calc(100vw - 40px));
+  --sticky-header-offset: 90px;
 }
 
 * {
@@ -23,7 +24,7 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 116px;
+  scroll-padding-top: 0;
 }
 
 body {
@@ -82,7 +83,7 @@ html:not(.aos-ready) [data-aos] {
 }
 
 section[id] {
-  scroll-margin-top: 116px;
+  scroll-margin-top: var(--sticky-header-offset);
 }
 
 .site-header {
@@ -114,16 +115,29 @@ section[id] {
 .brand-logo {
   display: inline-grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   background: var(--mint-soft);
   color: var(--deep);
+  overflow: hidden;
 }
 
 .brand-logo .lucide {
   width: 24px;
   height: 24px;
+}
+
+.brand-logo-image {
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgba(122, 165, 24, 0.18);
+}
+
+.brand-logo-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 3px;
 }
 
 .brand > span:not(.brand-logo) {
@@ -331,9 +345,9 @@ h3 {
 
 .trust-row {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
-  max-width: 640px;
+  max-width: 560px;
   margin-top: 38px;
 }
 
@@ -516,7 +530,7 @@ h3 {
   color: #fff;
   background:
     linear-gradient(90deg, rgba(2, 57, 25, 0.84), rgba(122, 165, 24, 0.38)),
-    url("assets/parallax-acolhimento.jpg") center / cover fixed;
+    url("assets/projeto-vida-parallax.jpg") center / cover fixed;
 }
 
 .parallax-band::after {
@@ -1092,6 +1106,11 @@ details p {
   background: var(--gold);
 }
 
+.contact-address {
+  margin-top: 18px;
+  font-weight: 850;
+}
+
 .contact-whatsapp {
   min-width: min(100%, 310px);
   min-height: 62px;
@@ -1212,6 +1231,7 @@ details p {
 @media (max-width: 760px) {
   :root {
     --container: min(100vw - 26px, 680px);
+    --sticky-header-offset: 64px;
   }
 
   .section-pad {
@@ -1308,7 +1328,7 @@ details p {
   }
 
   .trust-row {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
     margin-top: 28px;
   }

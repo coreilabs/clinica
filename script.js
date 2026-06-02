@@ -1,5 +1,59 @@
 const menuToggle = document.querySelector("[data-menu-toggle]");
 const nav = document.querySelector("[data-nav]");
+const header = document.querySelector("[data-header]");
+
+const updateStickyHeaderOffset = () => {
+  if (!header) return;
+
+  const headerHeight = Math.ceil(header.getBoundingClientRect().height);
+  document.documentElement.style.setProperty("--sticky-header-offset", `${headerHeight}px`);
+};
+
+const getStickyHeaderHeight = () => {
+  if (!header) return 0;
+
+  return Math.ceil(header.getBoundingClientRect().height);
+};
+
+const closeNavigation = () => {
+  if (!menuToggle || !nav) return;
+
+  menuToggle.setAttribute("aria-expanded", "false");
+  nav.classList.remove("open");
+  document.body.classList.remove("nav-open");
+};
+
+const scrollToHashTarget = (hash, updateHistory = true) => {
+  if (!hash || hash === "#") return false;
+
+  const target = document.querySelector(hash);
+  if (!target) return false;
+
+  const top = Math.max(0, window.scrollY + target.getBoundingClientRect().top - getStickyHeaderHeight());
+  const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+
+  window.scrollTo({ top, behavior });
+
+  if (updateHistory) {
+    window.history.pushState(null, "", hash);
+  }
+
+  return true;
+};
+
+updateStickyHeaderOffset();
+window.addEventListener("load", () => {
+  updateStickyHeaderOffset();
+
+  if (window.location.hash) {
+    requestAnimationFrame(() => scrollToHashTarget(window.location.hash, false));
+  }
+});
+window.addEventListener("resize", updateStickyHeaderOffset);
+
+if (header && "ResizeObserver" in window) {
+  new ResizeObserver(updateStickyHeaderOffset).observe(header);
+}
 
 if (menuToggle && nav) {
   menuToggle.addEventListener("click", () => {
@@ -10,10 +64,17 @@ if (menuToggle && nav) {
   });
 
   nav.addEventListener("click", (event) => {
-    if (event.target instanceof HTMLAnchorElement) {
-      menuToggle.setAttribute("aria-expanded", "false");
-      nav.classList.remove("open");
-      document.body.classList.remove("nav-open");
+    const clickedElement = event.target instanceof Element ? event.target : null;
+    const anchor = clickedElement?.closest('a[href^="#"]');
+
+    if (anchor instanceof HTMLAnchorElement) {
+      const hash = anchor.getAttribute("href");
+      event.preventDefault();
+      closeNavigation();
+
+      requestAnimationFrame(() => {
+        scrollToHashTarget(hash);
+      });
     }
   });
 }
